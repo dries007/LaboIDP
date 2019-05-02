@@ -1,0 +1,49 @@
+/*  
+ * vakken.idp
+ *
+ */
+
+vocabulary V {
+    type Docent constructed from { 
+        DVT, 
+        JVE, 
+        TGO
+        //,HCR
+    }
+    type Vak constructed from { 
+        ApplicatieArch, 
+        ArtificieleInt, 
+		EmbeddedDinges, 
+        ProductCert 
+    }
+    
+    Geeft(Docent, Vak)
+    Gemakkelijk(Vak)
+    
+    //BuisVak: Vak
+} 
+
+structure S : V {
+	Geeft = { 
+        JVE, ApplicatieArch; 
+        JVE, ArtificieleInt; 
+        TGO, EmbeddedDinges; 
+        DVT, ProductCert
+    }
+}
+
+theory T : V {
+	//Geeft(JVE, BuisVak).
+    !doc: ?vak: Geeft(doc, vak).
+    !vak: ?doc: Geeft(doc, vak).
+    
+    //?vak: Geeft(JVE, vak) & Gemakkelijk(vak).
+    !vak: Geeft(JVE, vak) => Gemakkelijk(vak).
+    //!vak: Geeft(DVT, vak) => ~Gemakkelijk(vak).
+   ~?vak: Geeft(DVT, vak) & Gemakkelijk(vak).
+}
+
+procedure main() {
+    stdoptions.nbmodels = 0		
+    printmodels(modelexpand(T,S))
+}

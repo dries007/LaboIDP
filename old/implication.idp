@@ -1,0 +1,26 @@
+vocabulary V {
+    P
+    Q
+    R
+}
+
+structure S: V {
+    P = true
+    Q = true
+    R = false
+}
+
+theory T: V {
+    //P => Q.
+    R => Q.
+    //P => R.
+    //P <=> Q.
+    //P <=> R.
+    //(P & Q) <=> (P | R).
+    //(P | Q) <=> (P & R).
+    //(P => Q) <=> (P <= R).
+}
+
+procedure main() {
+    print(sat(T, S))
+}

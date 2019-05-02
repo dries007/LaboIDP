@@ -1,0 +1,47 @@
+/* 
+ * diet.idp
+ *
+ */
+
+vocabulary V {
+	type Cijfer isa int
+    
+    L: Cijfer
+    E: Cijfer
+    S: Cijfer
+    F: Cijfer
+    O: Cijfer
+    D: Cijfer
+    I: Cijfer
+    T: Cijfer
+} 
+
+structure S : V {
+	Cijfer = {0..9}
+}
+
+theory T : V {
+	// Elke letter stelt een verschillend cijfer voor
+	L ~= E & L ~= S & L ~= F & L ~= O & L ~= D & L ~= I & L ~= T 
+	& E ~= S & E ~= F & E ~= O & E ~= D & E ~= I & E ~= T & S ~= F 
+	& S ~= O & S ~= D & S ~= I & S ~= T & F ~= O & F ~= D & F ~= I 
+	& F ~= T & O ~= D & O ~= I & O ~= T & D ~= I & D ~= T & I ~= T.
+    
+    L ~= 0.
+    F ~= 0.
+    D ~= 0.
+    
+    E = 6.
+    S = 2.
+    F = 1.
+    T = 9.
+    
+    (L*1000 + E*100 + S*10 + S) +
+    (F*1000 + O*100 + O*10 + D) =
+    (D*1000 + I*100 + E*10 + T).
+}
+
+procedure main() {	
+    stdoptions.nbmodels = 0
+    printmodels(modelexpand(T, S))	
+}

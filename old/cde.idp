@@ -1,0 +1,51 @@
+/* 
+ * diet.idp
+ *
+ */
+
+vocabulary V {
+	type Cijfer isa int
+    
+    A: Cijfer
+    B: Cijfer
+    C: Cijfer
+    D: Cijfer
+    E: Cijfer
+    I: Cijfer
+    
+    Even(Cijfer)
+} 
+
+structure S : V {
+	Cijfer = {0..9}
+    
+    Even = {0; 2; 4; 6; 8}
+}
+
+theory T : V {
+	// Elke letter stelt een verschillend cijfer voor
+	A ~= E & A ~= I & E ~= I &
+    B ~= C & B ~= D & C ~= D.
+    
+    Even(A).
+    Even(E).
+    Even(I).
+    ~Even(B).
+    ~Even(C).
+    ~Even(D).
+    
+    A ~= 0.
+    B ~= 0.
+    C ~= 0.
+    
+    E = 6.
+    
+    		10*A + I +
+    		10*B + A =
+    100*C + 10*D + E.
+}
+
+procedure main() {	
+    stdoptions.nbmodels = 0
+    printmodels(modelexpand(T, S))	
+}

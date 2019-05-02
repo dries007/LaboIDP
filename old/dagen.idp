@@ -1,0 +1,26 @@
+/*  
+ * dagen.idp
+ *
+ */
+
+vocabulary V {
+    type Dag constructed from { Maandag , Dinsdag , Woensdag ,Donderdag , Vrijdag , Zaterdag , Zondag }
+    Weekend(Dag)
+    
+    Pasen: Dag
+} 
+
+structure S : V {
+    Weekend = { Zaterdag ; Zondag }
+}
+
+theory T : V {
+    Weekend(Pasen).
+    Pasen ~= Zaterdag.
+}
+
+procedure main() {
+    stdoptions.nbmodels = 0			
+    models = modelexpand(T,S)
+    printmodels(models)
+}

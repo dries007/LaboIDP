@@ -1,0 +1,33 @@
+/*  
+ * rij.idp
+ *
+ */
+ 
+ vocabulary V {
+	type Index isa nat
+    type Waarde isa nat
+    Rij(Index): Waarde
+}
+
+structure S : V {
+	Index = { 0..10 }
+	Waarde = { 0..60 }
+}
+
+theory T : V {
+    Rij(0) = 3.
+	!i[Index]: i > 0 => Rij(i) = Rij(i-1) + 2.
+}
+
+
+theory T_fib : V {
+    Rij(0) = 0.
+    Rij(1) = 1.
+	!i[Index]: i > 1 => Rij(i) = Rij(i-1) + Rij(i-2).
+}
+
+
+procedure main() {
+    //printmodels(modelexpand(T,S))
+    printmodels(modelexpand(T_fib,S))
+}

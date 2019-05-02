@@ -1,0 +1,79 @@
+/*  
+ * circuit.idp
+ *
+ */
+
+vocabulary CircVoc {
+    type Wire
+    type Gate
+    type Test
+    
+    On(Wire, Test)
+    Output(Gate): Wire
+    FirstInput(Gate): Wire
+    SecondInput(Gate): Wire
+    
+    Xor(Gate)
+    And(Gate)
+    Or(Gate)
+    
+    InputWire(Wire)
+    InputWireOn(Wire, Test)
+    
+    OutputWire(Wire)
+    OutputWireOn(Wire, Test)
+    
+    ObservedOn(Wire, Test)
+    ObservedOff(Wire, Test)
+    
+    Broken(Gate)
+    
+    NbBroken : int
+}
+
+structure Circuit : CircVoc {
+    Test = {1; 2; 3}
+    
+    Wire = { K; L; M; N; O; P; Q; R; }
+    Gate = { A; B; C; D; E; }
+    Output = { A -> N; B -> P; C -> O; D -> Q; E -> R; }
+    FirstInput = { A -> K; B -> N; C -> L; D -> M; E -> Q; }
+    SecondInput = { A -> L; B -> M; C -> K; D -> N; E -> O; }
+    Xor = { A; B; }
+    And = { C; D; }
+    Or = { E; }
+    
+    InputWire = { K; L; M }
+    OutputWire = { P; R }
+    
+    // Oef 15
+    InputWireOn = { K, 1; L, 2; M, 3 }
+    ObservedOn = { P, 1; R, 1; P, 2; R, 2; P, 3 }
+    ObservedOff = { R, 3 }
+}
+
+theory CircTh : CircVoc {
+	!t[Test]: !x[Gate]: And(x) & ~Broken(x) => (On(FirstInput(x), t) & On(SecondInput(x), t) <=> On(Output(x), t)).
+    !t[Test]: !x[Gate]: Or(x) & ~Broken(x) => (On(FirstInput(x), t) | On(SecondInput(x), t) <=> On(Output(x), t)).
+    !t[Test]: !x[Gate]: Xor(x) & ~Broken(x) => (	(~On(FirstInput(x), t) & On(SecondInput(x), t))
+    					| 	(On(FirstInput(x), t) & ~On(SecondInput(x), t)) <=> On(Output(x), t)).
+    
+    !t[Test]: !x[Wire]: InputWire(x) => (InputWireOn(x, t) <=> On(x, t)).
+    !t[Test]: !x[Wire]: ~InputWire(x) => ~InputWireOn(x, t).
+    !t[Test]: !x[Wire]: OutputWire(x) => (OutputWireOn(x, t) <=> On(x, t)).
+    !t[Test]: !x[Wire]: ~OutputWire(x) => ~OutputWireOn(x, t).
+    
+    !t[Test]: !x[Wire]: (ObservedOn(x, t) => On(x, t)) & (ObservedOff(x, t) => ~On(x, t)).
+    
+    NbBroken = #{x[Gate]: Broken(x)}.
+}
+
+term t: CircVoc {
+    #{x[Gate]: Broken(x)}
+}
+
+procedure main() {
+    stdoptions.nbmodels = 0
+    //printmodels(modelexpand(CircTh, Circuit))
+    printmodels(minimize(CircTh, Circuit, t))
+}

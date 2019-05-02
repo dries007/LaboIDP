@@ -1,0 +1,32 @@
+/*  
+ * map.idp
+ *
+ */
+
+vocabulary V {
+	type Kleur
+	type Land
+	Grens(Land, Land)
+    
+    ToegekendeKleur(Land): Kleur
+}
+
+structure S : V {
+	Kleur = { Rood; Oranje; Geel; Groen; Blauw }
+	Land = { Belgie; Nederland; Duitsland; Luxemburg; Frankrijk; Zwitserland; Oostenrijk }
+	Grens = { 
+		(Nederland,Belgie); 	 (Nederland,Duitsland);  (Belgie,Frankrijk);
+		(Belgie,Luxemburg); 	 (Belgie,Duitsland); 	 (Luxemburg,Frankrijk); 
+		(Luxemburg, Duitsland);  (Frankrijk,Duitsland);  (Frankrijk,Zwitserland); 
+		(Duitsland,Zwitserland); (Duitsland,Oostenrijk); (Zwitserland,Oostenrijk); 
+    }    
+}
+
+theory T : V {
+    !l1 l2: Grens(l1, l2) => ToegekendeKleur(l1) ~= ToegekendeKleur(l2).
+}
+
+procedure main() {
+    stdoptions.nbmodels = 3
+    printmodels(modelexpand(T,S))
+}

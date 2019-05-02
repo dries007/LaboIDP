@@ -1,0 +1,76 @@
+/*  
+ * circuit.idp
+ *
+ */
+
+vocabulary CircVoc {
+    type Wire
+    type Gate
+    
+    On(Wire)
+    Output(Gate): Wire
+    FirstInput(Gate): Wire
+    SecondInput(Gate): Wire
+    
+    Xor(Gate)
+    And(Gate)
+    Or(Gate)
+    
+    InputWire(Wire)
+    InputWireOn(Wire)
+    
+    OutputWire(Wire)
+    OutputWireOn(Wire)
+    
+    ObservedOn(Wire)
+    ObservedOff(Wire)
+}
+
+structure Circuit : CircVoc {
+    Wire = { K; L; M; N; O; P; Q; R; }
+    Gate = { A; B; C; D; E; }
+    Output = { A -> N; B -> P; C -> O; D -> Q; E -> R; }
+    FirstInput = { A -> K; B -> N; C -> L; D -> M; E -> Q; }
+    SecondInput = { A -> L; B -> M; C -> K; D -> N; E -> O; }
+    Xor = { A; B; }
+    And = { C; D; }
+    Or = { E; }
+    
+    // On = {K; M; N; Q; R} // Oef 3 -> 1 model
+    
+    InputWire = { K; L; M } // Oef 4
+    // InputWireOn = { K; M } // Oef 6
+    // InputWireOn = { L } // Oef 6
+    
+    OutputWire = { P; R }
+    // OutputWireOn = { P }
+    
+    // Oef 10.1
+    // InputWireOn = { K; L }
+    // ObservedOn = { O }
+    // ObservedOff = { N }
+    
+    // Oef 10.2
+    InputWireOn = { K; M }
+    ObservedOn = { N }
+    ObservedOff = { Q }
+}
+
+theory CircTh : CircVoc {
+	!x[Gate]: And(x) => (On(FirstInput(x)) & On(SecondInput(x)) <=> On(Output(x))).
+    !x[Gate]: Or(x) => (On(FirstInput(x)) | On(SecondInput(x)) <=> On(Output(x))).
+    !x[Gate]: Xor(x) => (	(~On(FirstInput(x)) & On(SecondInput(x)))
+    					| 	(On(FirstInput(x)) & ~On(SecondInput(x))) <=> On(Output(x))).
+    
+    !x[Wire]: InputWire(x) => (InputWireOn(x) <=> On(x)).
+    !x[Wire]: ~InputWire(x) => ~InputWireOn(x).
+    !x[Wire]: OutputWire(x) => (OutputWireOn(x) <=> On(x)).
+    !x[Wire]: ~OutputWire(x) => ~OutputWireOn(x).
+    
+    !x[Wire]: (ObservedOn(x) => On(x)) & (ObservedOff(x) => ~On(x)).
+}
+
+procedure main() {
+    stdoptions.nbmodels = 5
+    printmodels(modelexpand(CircTh, Circuit))
+}

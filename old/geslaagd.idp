@@ -1,0 +1,33 @@
+/*  
+ * geslaagd.idp
+ *
+ */
+ 
+vocabulary V {
+    type Vak
+    type Score isa nat
+    ExamenResultaat(Vak): Score
+    Geslaagd(Vak)
+    Getolereerd(Vak)
+} 
+
+structure S : V {
+    Vak = { ArtificieleInt; EmbeddedDinges; ProductCert; }
+    Score = { 0 .. 20 }
+    ExamenResultaat = { ArtificieleInt -> 12; EmbeddedDinges -> 17; ProductCert -> 8; }
+    Getolereerd = {}
+}
+
+theory T : V {
+    { !x: Geslaagd(x) <- ExamenResultaat(x) >= 10. }
+
+}
+
+theory T2 : V {
+    { !x: Geslaagd(x) <- ExamenResultaat(x) >= 10 & Getolereerd(x). }
+}
+
+procedure main() {
+    stdoptions.nbmodels = 0
+    printmodels(modelexpand(T2,S))
+}

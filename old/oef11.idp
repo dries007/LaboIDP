@@ -1,0 +1,12 @@
+vocabulary V {
+    type Docent constructed from { DVT , JVE , TGO }
+    type Vak constructed from { ApplicatieArch , ArtificieleInt ,
+        EmbeddedDinges , ProductCert }
+    Geeft(Docent , Vak)
+}
+structure S: V {
+    Geeft = { JVE ,ArtificieleInt ;
+        JVE ,ApplicatieArch ;
+        TGO ,EmbeddedDinges ;
+        DVT ,ProductCert}
+}
