@@ -22,7 +22,7 @@ structure S : V {
 
     Gegeven = {
         (1, 2, 2); (1, 4, 3);
-        (2, 1, 7); (2, 2, 1); (2, 6, 9); (2, 7, 9);
+        (2, 1, 7); (2, 2, 1); (2, 6, 9); (2, 7, 3);
         (3, 2, 3); (3, 3, 4); (3, 4, 5); (3, 8, 7);
         (4, 1, 9); (4, 4, 6); 
         (5, 2, 4); (5, 8, 6);
@@ -51,9 +51,9 @@ theory T : V {
     
     // In vierkant
     !r1, k1, r2, k2: Vierkant(r1, k1, r2, k2) => Oplossing(r1, k1) ~= Oplossing(r2, k2).
-    
-    //!r, k1, k2: Oplossing(r, k1) = Oplossing(r, k2).
-    //!k, g: ?1r: Oplossing(r, k) = g.
+    // Rows & Cols
+    !k, g: ?1r: Oplossing(r, k) = g.
+    !r, g: ?1k: Oplossing(r, k) = g.
     
 }
 
