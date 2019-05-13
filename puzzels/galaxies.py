@@ -103,20 +103,20 @@ procedure main() {
 ''')
 
 
-def up(x, y):
-    return x, y-1
+def up(x, y, offset=1):
+    return x, y-offset
 
 
-def down(x, y):
-    return x, y+1
+def down(x, y, offset=1):
+    return x, y+offset
 
 
-def left(x, y):
-    return x-1, y
+def left(x, y, offset=1):
+    return x-offset, y
 
 
-def right(x, y):
-    return x+1, y
+def right(x, y, offset=1):
+    return x+offset, y
 
 
 DIRECTIONS = (up, down, left, right)
@@ -140,10 +140,43 @@ def all_touching_squares(x, y):
     return {(x, y)}
 
 
-def get_neighbours(x, y):
+def get_neighbours(x, y, size):
     if not is_square(x, y):
         raise ValueError('Not Square')
+    neighbours = set()
+    if x != 1:
+        neighbours.add(left(x, y, offset=2))
+    if x != size-1:
+        neighbours.add(right(x, y, offset=2))
+    if y != 1:
+        neighbours.add(down(x, y, offset=2))
+    if y != size-1:
+        neighbours.add(up(x, y, offset=2))
+    return neighbours
 
+
+def between(a, b):
+    ax, ay = a
+    bx, by = b
+    assert (ax+bx)//2 == (ax+bx)/2, (ay+by)//2 == (ay+by)/2
+    return (ax+bx)//2, (ay+by)//2
+
+
+def is_continuous(squares, size):
+    """
+    todo: Broken?
+    """
+    if len(squares) == 0:
+        return True
+    explored = set()
+    to_explore = {next(iter(squares))}
+    while len(to_explore) > 0:
+        pos = to_explore.pop()
+        explored.add(pos)
+        for n in get_neighbours(*pos, size):
+            if n not in explored and n in squares:
+                to_explore.add(n)
+    return len(set(squares) ^ explored) == 0
 
 
 class Galaxies:
@@ -189,8 +222,9 @@ class Galaxies:
         # Polygamy (more than 1 value per square) is impossible because it's a dict.
         only_mappings_to_centers = len(set(self.mapping_c2s.keys()) - set(self.centers.keys())) == 0
         center_touching_squares = all(len(all_touching_squares(x, y) - self.mapping_c2s[x, y]) == 0 for x, y in self.centers.keys())
-
-        # todo: Check if walls surround regions (and only between regions)
+        different_walls = all((between(n, c) in self.walls for n in get_neighbours(*c, self.size) if self.mapping_c2s[n] != self.mapping_c2s[c]) for c in squares)
+        same_no_walls = all((between(n, c) not in self.walls for n in get_neighbours(*c, self.size) if self.mapping_c2s[n] == self.mapping_c2s[c]) for c in squares)
+        continuous = all(is_continuous(region, self.size) for c, region in self.mapping_c2s.items())
 
         # Not yet implemented in IDP.
         # todo: Check region symmetry
@@ -203,6 +237,9 @@ class Galaxies:
         assert only_squares_have_values
         assert only_mappings_to_centers
         assert center_touching_squares
+        assert different_walls
+        assert same_no_walls
+        assert continuous
 
         return True
 
