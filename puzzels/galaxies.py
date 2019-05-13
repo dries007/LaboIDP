@@ -146,12 +146,13 @@ def get_neighbours(x, y, size):
     neighbours = set()
     if x != 1:
         neighbours.add(left(x, y, offset=2))
-    if x != size-1:
+    if x != size-2:
         neighbours.add(right(x, y, offset=2))
     if y != 1:
-        neighbours.add(down(x, y, offset=2))
-    if y != size-1:
         neighbours.add(up(x, y, offset=2))
+    if y != size-2:
+        neighbours.add(down(x, y, offset=2))
+    # print('get_neighbours', (x, y), size, neighbours)
     return neighbours
 
 
@@ -163,9 +164,7 @@ def between(a, b):
 
 
 def is_continuous(squares, size):
-    """
-    todo: Broken?
-    """
+    # print('is_continuous', squares, size)
     if len(squares) == 0:
         return True
     explored = set()
@@ -176,7 +175,17 @@ def is_continuous(squares, size):
         for n in get_neighbours(*pos, size):
             if n not in explored and n in squares:
                 to_explore.add(n)
+    # print('explored', explored)
+    # print(len(set(squares) ^ explored) == 0)
     return len(set(squares) ^ explored) == 0
+
+
+def mirror(square, center):
+    # print('mirror', square, center)
+    sx, sy = square
+    cx, cy = center
+    dx, dy = cx - sx, cy - sy
+    return cx + dx, cy + dy
 
 
 class Galaxies:
@@ -224,11 +233,10 @@ class Galaxies:
         center_touching_squares = all(len(all_touching_squares(x, y) - self.mapping_c2s[x, y]) == 0 for x, y in self.centers.keys())
         different_walls = all((between(n, c) in self.walls for n in get_neighbours(*c, self.size) if self.mapping_c2s[n] != self.mapping_c2s[c]) for c in squares)
         same_no_walls = all((between(n, c) not in self.walls for n in get_neighbours(*c, self.size) if self.mapping_c2s[n] == self.mapping_c2s[c]) for c in squares)
-        continuous = all(is_continuous(region, self.size) for c, region in self.mapping_c2s.items())
 
         # Not yet implemented in IDP.
-        # todo: Check region symmetry
-        # todo: Check region continuity
+        continuous = all(is_continuous(region, self.size) for c, region in self.mapping_c2s.items())
+        symmetric = all(mirror(s, c) in squares and self.mapping_s2c[mirror(s, c)] == c for s, c in self.mapping_s2c.items())
 
         # Assert anything to make sure there is no unnoticed regression.
         assert all_walls_connected
@@ -239,9 +247,10 @@ class Galaxies:
         assert center_touching_squares
         assert different_walls
         assert same_no_walls
-        assert continuous
+        # assert continuous
+        # assert symmetric
 
-        return True
+        return continuous and symmetric
 
     def get_inner_tile(self, x, y):
         """
@@ -396,9 +405,10 @@ class Galaxies:
             # pprint(self.mapping_s2c, stream=file, width=160)
             print('Grid:', file=file)
             print(self, file=file)
+            print(file=file)
             if file:
                 print(self)
-            print(file=file)
+                print('Valid:', self.check_valid())
             print('Valid:', self.check_valid(), file=file)
             return
 
@@ -439,7 +449,9 @@ def main():
     grid.set_center(5, 8)
     grid.set_center(9, 8)
     grid.set_center(3, 9)
-    # print(grid)
+    print('Input')
+    print(grid)
+    print('Running...')
     grid.run(interactive=True)
 
 
