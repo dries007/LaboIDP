@@ -15,7 +15,7 @@ Copyright (c) Dries007 & Laurens VDW 2019
 import itertools
 import re
 import string
-import subprocess
+import subprocess as sp
 import textwrap
 from pprint import pprint
 
@@ -250,6 +250,9 @@ class Galaxies:
         # assert continuous
         # assert symmetric
 
+        print('continuous:', continuous)
+        print('symmetric:', symmetric)
+
         return continuous and symmetric
 
     def get_inner_tile(self, x, y):
@@ -374,7 +377,9 @@ class Galaxies:
         # print(idp)
         # print('Running IDP...')
 
-        run = subprocess.run(('idp', ), input=idp, capture_output=True, universal_newlines=True)
+        p = sp.Popen(('idp', ), universal_newlines=True, stdin=sp.PIPE, stdout=sp.PIPE,  stderr=sp.STDOUT)
+        stdout, stderr = p.communicate(idp)
+
         # print('IDP Returned: ', run.returncode)
         # print(10*'~')
         # print(run.stdout)
@@ -384,9 +389,9 @@ class Galaxies:
             print(idp, file=f)
             print('/* IDP Output', file=f)
             print(20 * '-=#=-', file=f)
-            print(run.stdout, file=f)
+            print(stdout, file=f)
             print(20*'-=#=-', file=f)
-            for line in run.stdout.splitlines():
+            for line in stdout.splitlines():
                 self.parse_input(line, file=f)
             print('*/', file=f)
 

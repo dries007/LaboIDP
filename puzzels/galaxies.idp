@@ -102,6 +102,11 @@ procedure main() {
 
 /* IDP Output
 -=#=--=#=--=#=--=#=--=#=--=#=--=#=--=#=--=#=--=#=--=#=--=#=--=#=--=#=--=#=--=#=--=#=--=#=--=#=--=#=-
+(Reading from stdin)
+Warning: Verifying and/or autocompleting structure S
+Warning: Consistency cannot be checked for functions over an infinite domain.
+Warning: Derived sort X for variable x2. At 
+Warning: Derived sort Y for variable y2. At 
 Number of models: 5
 Model 1
 =======
