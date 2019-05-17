@@ -455,6 +455,21 @@ def main():
     grid.set_center(5, 8)
     grid.set_center(9, 8)
     grid.set_center(3, 9)
+
+    # grid = Galaxies(7)
+    # grid.set_center(8, 1)
+    # grid.set_center(3, 2)
+    # grid.set_center(12, 2)
+    # grid.set_center(9, 4)
+    # grid.set_center(2, 5)
+    # grid.set_center(2, 8)
+    # grid.set_center(6, 9)
+    # grid.set_center(13, 9)
+    # grid.set_center(10, 10)
+    # grid.set_center(2, 13)
+    # grid.set_center(10, 13)
+
+
     print('Input')
     print(grid)
     print('Running...')
