@@ -87,8 +87,9 @@ theory T : V {
     !(x1, y1) in Square: !(cx1, cy1) in Center: BelongsTo(x1, y1, cx1, cy1) => (~BelongsTo(x1+2, y1, cx1, cy1) <=> Walls(x1+1, y1)).
     !(x1, y1) in Square: !(cx1, cy1) in Center: BelongsTo(x1, y1, cx1, cy1) => (~BelongsTo(x1, y1-2, cx1, cy1) <=> Walls(x1, y1-1)).
     !(x1, y1) in Square: !(cx1, cy1) in Center: BelongsTo(x1, y1, cx1, cy1) => (~BelongsTo(x1, y1+2, cx1, cy1) <=> Walls(x1, y1+1)).
+    // Check region symmetry: mirror is 2 times center minus coordinate
+    !(x, y) in Square: !(cx, cy) in Center: BelongsTo(x, y, cx, cy) <=> BelongsTo(2*cx-x, 2*cy-y, cx, cy).
     
-    // todo: Check region symmetry
     
     // todo: Check region continuity
     // !(x1, y1) in Square: !(cx1, cy1) in Center: BelongsTo(x1, y1, cx1, cy1) => ().
